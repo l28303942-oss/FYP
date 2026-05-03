@@ -1,5 +1,9 @@
 /trained models
 
+# Local datasets (too large for GitHub; keep on disk / share via Drive etc.)
+Dataset And Files/
+Preprocessed_Dataset_Segmentation/
+
 # Large checkpoints (keep source code in details/)
 details/*.pth
 
