@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Patients{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div>
+    <p class="eyebrow">Registry</p>
+    <h1>Patient management</h1>
+    <p class="muted">Add, search, and maintain pulmonary imaging cohorts.</p>
+  </div>
+  <button type="button" class="btn btn-primary" data-open="addPatient"><i class="fa-solid fa-user-plus"></i> Add patient</button>
+</section>
+
+<form class="toolbar glass" method="get" action="{{ url_for('main.patients') }}">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search name, ID, contact…" class="search-input">
+  <select name="gender" class="select">
+    <option value="">All genders</option>
+    <option value="Male" {% if gender == 'Male' %}selected{% endif %}>Male</option>
+    <option value="Female" {% if gender == 'Female' %}selected{% endif %}>Female</option>
+    <option value="Other" {% if gender == 'Other' %}selected{% endif %}>Other</option>
+  </select>
+  <button type="submit" class="btn btn-ghost">Filter</button>
+</form>
+
+<div class="table-wrap glass">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Patient ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Contact</th>
+        <th>Scan date</th>
+        <th>Doctor</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in patients %}
+      <tr>
+        <td><code>{{ p.patient_id }}</code></td>
+        <td><strong>{{ p.full_name }}</strong></td>
+        <td>{{ p.age }}</td>
+        <td>{{ p.gender }}</td>
+        <td>{{ p.contact or '—' }}</td>
+        <td>{{ p.scan_date or '—' }}</td>
+        <td>{{ p.doctor_name or '—' }}</td>
+        <td class="row-actions">
+          <button type="button" class="btn-icon" title="Edit" data-edit-patient
+            data-id="{{ p.id }}"
+            data-name="{{ p.full_name }}"
+            data-age="{{ p.age }}"
+            data-gender="{{ p.gender }}"
+            data-contact="{{ p.contact or '' }}"
+            data-notes="{{ p.disease_notes or '' }}"
+            data-scan="{{ p.scan_date or '' }}"
+            data-doctor="{{ p.doctor_name or '' }}"><i class="fa-solid fa-pen"></i></button>
+          <form method="post" action="{{ url_for('main.patient_delete', pid=p.id) }}" onsubmit="return confirm('Delete this patient?');">
+            <button type="submit" class="btn-icon danger" title="Delete"><i class="fa-solid fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8"><div class="empty-inline">No patients match your filters.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<dialog id="addPatient" class="modal glass">
+  <form method="post" action="{{ url_for('main.patient_add') }}" class="modal-form">
+    <h2>New patient</h2>
+    <label class="field"><span>Full name</span><input name="full_name" required></label>
+    <div class="field-row">
+      <label class="field"><span>Age</span><input type="number" name="age" min="0" max="120" required></label>
+      <label class="field"><span>Gender</span>
+        <select name="gender"><option>Male</option><option>Female</option><option>Other</option></select>
+      </label>
+    </div>
+    <label class="field"><span>Contact</span><input name="contact"></label>
+    <label class="field"><span>Disease notes</span><textarea name="disease_notes" rows="2"></textarea></label>
+    <label class="field"><span>Scan date</span><input type="date" name="scan_date"></label>
+    <label class="field"><span>Doctor name</span><input name="doctor_name"></label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" data-close="addPatient">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="editPatient" class="modal glass">
+  <form method="post" action="" class="modal-form" id="editPatientForm">
+    <h2>Edit patient</h2>
+    <label class="field"><span>Full name</span><input name="full_name" id="ep_name" required autocomplete="name"></label>
+    <div class="field-row">
+      <label class="field"><span>Age</span><input type="number" name="age" id="ep_age" min="0" max="120" required></label>
+      <label class="field"><span>Gender</span>
+        <select name="gender" id="ep_gender"><option>Male</option><option>Female</option><option>Other</option></select>
+      </label>
+    </div>
+    <label class="field"><span>Contact</span><input name="contact" id="ep_contact"></label>
+    <label class="field"><span>Disease notes</span><textarea name="disease_notes" id="ep_notes" rows="2"></textarea></label>
+    <label class="field"><span>Scan date</span><input type="date" name="scan_date" id="ep_scan"></label>
+    <label class="field"><span>Doctor name</span><input name="doctor_name" id="ep_doctor"></label>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" data-close="editPatient">Cancel</button>
+      <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+  </form>
+</dialog>
+{% endblock %}

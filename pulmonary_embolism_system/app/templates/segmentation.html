@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Segmentation{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div>
+    <p class="eyebrow">AI Core</p>
+    <h1>TSNet + Attention U-Net</h1>
+    <p class="muted">Batch inference · masks · heatmaps · overlays · timing & confidence</p>
+  </div>
+</section>
+
+<div class="table-wrap glass">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Scan</th>
+        <th>Patient</th>
+        <th>Status</th>
+        <th>Confidence</th>
+        <th>Time (s)</th>
+        <th>Preview</th>
+        <th>Run</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in scans %}
+      {% set pat = patients.get(s.patient_id) %}
+      <tr>
+        <td>#{{ s.id }} · {{ s.original_filename or 'file' }}</td>
+        <td>{{ pat.full_name if pat else '—' }} <span class="muted">({{ pat.patient_id if pat else '' }})</span></td>
+        <td><span class="badge st-{{ s.status }}">{{ s.status }}</span></td>
+        <td>{% if s.confidence is not none %}{{ '%.2f'|format(s.confidence * 100) }}%{% else %}—{% endif %}</td>
+        <td>{% if s.processing_time_sec %}{{ '%.3f'|format(s.processing_time_sec) }}{% else %}—{% endif %}</td>
+        <td class="preview-cell">
+          {% if s.status == 'completed' %}
+            <div class="thumb-row">
+              <img src="{{ url_for('main.media_scan', sid=s.id) }}" alt="orig">
+              <img src="{{ url_for('main.media_overlay', sid=s.id) }}" alt="overlay">
+            </div>
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          <form method="post">
+            <input type="hidden" name="scan_id" value="{{ s.id }}">
+            <button type="submit" class="btn btn-sm btn-primary" {% if s.status == 'processing' %}disabled{% endif %}><i class="fa-solid fa-play"></i> Run</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7"><div class="empty-inline">No uploads yet. <a href="{{ url_for('main.upload') }}">Upload a scan</a>.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if scans %}
+<section class="panel glass detail-panel">
+  <h2>Visualization gallery</h2>
+  <p class="muted fine-print">Completed scans — original vs overlay vs heatmap</p>
+  <div class="gallery-grid">
+    {% for s in scans %}
+    {% if s.status == 'completed' %}
+    <article class="result-card glass">
+      <header><span>Scan #{{ s.id }}</span><span class="pill">{{ '%.1f'|format((s.confidence or 0)*100) }}%</span></header>
+      <div class="gallery-three">
+        <figure><figcaption>Original</figcaption><img src="{{ url_for('main.media_scan', sid=s.id) }}" alt=""></figure>
+        <figure><figcaption>Overlay</figcaption><img src="{{ url_for('main.media_overlay', sid=s.id) }}" alt=""></figure>
+        <figure><figcaption>Heatmap</figcaption><img src="{{ url_for('main.media_heatmap', sid=s.id) }}" alt=""></figure>
+      </div>
+      {% if s.error_message %}<p class="fine-print">{{ s.error_message }}</p>{% endif %}
+    </article>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

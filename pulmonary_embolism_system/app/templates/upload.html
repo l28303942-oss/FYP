@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Upload scan{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div>
+    <p class="eyebrow">Imaging</p>
+    <h1>CT scan upload</h1>
+    <p class="muted">PNG / JPG / DICOM · Drag & drop or browse · Stored securely under <code>uploads/scans</code></p>
+  </div>
+</section>
+
+<div class="upload-layout">
+  <div class="panel glass upload-panel">
+    <form id="uploadForm" class="upload-form">
+      <label class="field">
+        <span>Assign to patient</span>
+        <select name="patient_id" id="patientSelect" required>
+          <option value="">Select patient…</option>
+          {% for p in patients %}
+            <option value="{{ p.id }}">{{ p.patient_id }} — {{ p.full_name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" name="scan_file" accept=".png,.jpg,.jpeg,.dcm,.dicom" hidden>
+        <div class="dz-inner">
+          <i class="fa-solid fa-cloud-arrow-up dz-icon"></i>
+          <p><strong>Drop files here</strong> or click to browse</p>
+          <p class="muted fine-print">Max 200 MB · Allowed: png, jpg, jpeg, dcm</p>
+        </div>
+      </div>
+      <div class="progress-wrap" id="progressWrap" hidden>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <span id="progressLabel">0%</span>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="uploadBtn"><i class="fa-solid fa-upload"></i> Upload scan</button>
+    </form>
+  </div>
+  <aside class="panel glass tips">
+    <h3><i class="fa-solid fa-lightbulb"></i> Tips</h3>
+    <ul class="tips-list">
+      <li>Use single-slice PNG/JPG for fastest preview.</li>
+      <li>DICOM supported via pydicom — multi-frame uses middle slice.</li>
+      <li>After upload, run <strong>Segmentation</strong> to invoke Attention U-Net.</li>
+    </ul>
+  </aside>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

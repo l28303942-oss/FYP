@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Sign up{% endblock %}
+{% block main_class %}auth-layout{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+<div class="auth-wrap">
+  <div class="auth-card glass">
+    <div class="auth-header">
+      <div class="auth-logo"><i class="fa-solid fa-user-plus"></i></div>
+      <h1>Create account</h1>
+      <p class="muted">Secure password hashing · Session-based auth</p>
+    </div>
+    <form method="post" class="auth-form">
+      <label class="field">
+        <span>Username</span>
+        <input type="text" name="username" required minlength="3" autocomplete="username">
+      </label>
+      <label class="field">
+        <span>Email</span>
+        <input type="email" name="email" required autocomplete="email">
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" name="password" required minlength="8" autocomplete="new-password">
+      </label>
+      <label class="field">
+        <span>Confirm password</span>
+        <input type="password" name="confirm_password" required minlength="8" autocomplete="new-password">
+      </label>
+      <button type="submit" class="btn btn-primary btn-block"><span>Register</span><i class="fa-solid fa-check"></i></button>
+    </form>
+    <p class="auth-switch">Already registered? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+  </div>
+  <div class="auth-side">
+    <div class="blob alt"></div>
+    <p class="tagline">Clinical-grade UI · Dark / Light themes</p>
+  </div>
+</div>
+{% endblock %}

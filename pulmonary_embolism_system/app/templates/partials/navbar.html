@@ -1,0 +1,32 @@
+{# Left sidebar navigation — no horizontal menu in top bar #}
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+<button type="button" class="sidebar-fab" id="sidebarToggle" aria-label="Open menu">
+  <i class="fa-solid fa-bars"></i>
+</button>
+
+<aside class="sidebar glass" id="sidebar" aria-label="Main navigation">
+  <div class="sidebar-brand">
+    <i class="fa-solid fa-lungs-virus brand-icon"></i>
+    <div class="brand-text-wrap">
+      <span class="brand-text">PE <span class="thin">AI Lab</span></span>
+      <span class="brand-sub">Pulmonary Embolism AI</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav" id="sidebarNav">
+    <a href="{{ url_for('main.dashboard') }}" class="sidebar-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+    <a href="{{ url_for('main.patients') }}" class="sidebar-link {% if request.endpoint == 'main.patients' %}active{% endif %}"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+    <a href="{{ url_for('main.upload') }}" class="sidebar-link {% if request.endpoint == 'main.upload' %}active{% endif %}"><i class="fa-solid fa-cloud-arrow-up"></i><span>Upload Scan</span></a>
+    <a href="{{ url_for('main.segmentation') }}" class="sidebar-link {% if request.endpoint == 'main.segmentation' %}active{% endif %}"><i class="fa-solid fa-brain"></i><span>Segmentation</span></a>
+    <a href="{{ url_for('main.reports') }}" class="sidebar-link {% if request.endpoint == 'main.reports' %}active{% endif %}"><i class="fa-solid fa-file-medical"></i><span>Reports</span></a>
+    <a href="{{ url_for('main.history') }}" class="sidebar-link {% if request.endpoint == 'main.history' %}active{% endif %}"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+    <a href="{{ url_for('main.settings') }}" class="sidebar-link {% if request.endpoint == 'main.settings' %}active{% endif %}"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button type="button" class="sidebar-theme-btn" data-theme-toggle title="Toggle theme" aria-label="Toggle theme">
+      <i class="fa-solid fa-circle-half-stroke"></i><span>Theme</span>
+    </button>
+    <a href="{{ url_for('auth.logout') }}" class="sidebar-link logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+  </div>
+</aside>

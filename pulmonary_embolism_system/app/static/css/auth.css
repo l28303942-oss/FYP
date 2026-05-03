@@ -1,0 +1,121 @@
+/* Auth pages — glass + gradients */
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+}
+
+.auth-wrap {
+  display: grid;
+  grid-template-columns: minmax(320px, 440px) 1fr;
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .auth-wrap {
+    grid-template-columns: 1fr;
+  }
+  .auth-side {
+    display: none;
+  }
+}
+
+.auth-card {
+  margin: auto;
+  padding: 2rem 2.25rem;
+  width: min(440px, 100% - 2rem);
+}
+
+.auth-header h1 {
+  margin: 0.35rem 0;
+  font-size: 1.75rem;
+}
+
+.auth-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(13, 71, 161, 0.18), rgba(41, 182, 246, 0.28));
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+.auth-form .field {
+  margin-bottom: 1rem;
+}
+
+.auth-form input {
+  padding: 0.65rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-family: inherit;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text);
+}
+
+[data-theme="dark"] .auth-form input {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.inline-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  margin-bottom: 1.1rem;
+  color: var(--muted);
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1.25rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.auth-switch a {
+  color: var(--primary-2);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-side {
+  position: relative;
+  background: linear-gradient(140deg, #0d47a1, #29b6f6, #00bcd4);
+  color: #fff;
+  display: flex;
+  align-items: flex-end;
+  padding: 2.5rem;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  top: -120px;
+  right: -80px;
+  filter: blur(0);
+}
+
+.blob.alt {
+  top: 20%;
+  left: -100px;
+  width: 360px;
+  height: 360px;
+}
+
+.tagline {
+  position: relative;
+  z-index: 1;
+  font-size: 1.1rem;
+  max-width: 360px;
+  line-height: 1.5;
+  opacity: 0.95;
+}

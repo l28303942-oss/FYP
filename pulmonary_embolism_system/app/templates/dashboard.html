@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="page-hero fade-in">
+  <div>
+    <p class="eyebrow">Overview</p>
+    <h1>Welcome, <span class="gradient-text">{{ current_user.username }}</span></h1>
+    <p class="muted">Monitor patients, scans, and AI segmentation throughput.</p>
+  </div>
+  <div class="hero-actions">
+    <button type="button" class="btn btn-ghost" id="themeToggleDash" title="Toggle theme"><i class="fa-solid fa-circle-half-stroke"></i></button>
+    <a href="{{ url_for('main.upload') }}" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Upload scan</a>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <article class="stat-card glass">
+    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+    <div>
+      <p class="stat-label">Total patients</p>
+      <p class="stat-value" data-count="{{ total_patients }}">0</p>
+    </div>
+  </article>
+  <article class="stat-card glass">
+    <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+    <div>
+      <p class="stat-label">Total scans</p>
+      <p class="stat-value" data-count="{{ total_scans }}">0</p>
+    </div>
+  </article>
+  <article class="stat-card glass">
+    <div class="stat-icon ok"><i class="fa-solid fa-check-double"></i></div>
+    <div>
+      <p class="stat-label">Segmented</p>
+      <p class="stat-value" data-count="{{ segmented }}">0</p>
+    </div>
+  </article>
+  <article class="stat-card glass">
+    <div class="stat-icon warn"><i class="fa-solid fa-hourglass-half"></i></div>
+    <div>
+      <p class="stat-label">Pending</p>
+      <p class="stat-value" data-count="{{ pending }}">0</p>
+    </div>
+  </article>
+  <article class="stat-card glass wide">
+    <div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div>
+    <div>
+      <p class="stat-label">Avg. confidence (proxy)</p>
+      <p class="stat-value"><span data-count="{{ accuracy }}">0</span><span class="pct-suffix">%</span></p>
+    </div>
+  </article>
+</section>
+
+<section class="grid-2">
+  <div class="panel glass">
+    <div class="panel-head">
+      <h2>Case mix</h2>
+      <span class="pill">Live</span>
+    </div>
+    <canvas id="dashChart" height="220"></canvas>
+    <p class="fine-print muted">Segmented vs pending queue · demo analytics</p>
+  </div>
+  <div class="panel glass">
+    <div class="panel-head">
+      <h2>Recent activity</h2>
+      <a href="{{ url_for('main.history') }}" class="link">Full history</a>
+    </div>
+    {% if recent %}
+      <ul class="activity-list">
+        {% for s in recent %}
+          <li>
+            <div class="dot {% if s.status == 'completed' %}ok{% elif s.status == 'failed' %}bad{% endif %}"></div>
+            <div>
+              <strong>Scan #{{ s.id }}</strong>
+              <span class="muted">{{ s.status }} · {{ s.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty-state">
+        <i class="fa-regular fa-folder-open"></i>
+        <p>No scans yet. Upload a CT slice to begin.</p>
+        <a class="btn btn-primary btn-sm" href="{{ url_for('main.upload') }}">Upload</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  const segmented = {{ segmented|int }};
+  const pending = {{ pending|int }};
+  const ctx = document.getElementById('dashChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Segmented', 'Pending'],
+        datasets: [{
+          data: [segmented, pending],
+          backgroundColor: ['#29b6f6', '#ffb74d'],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text') || '#111' } } },
+        cutout: '62%',
+      }
+    });
+  }
+</script>
+{% endblock %}

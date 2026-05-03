@@ -1,0 +1,1 @@
+# Place your trained Attention U-Net (.pth) here and set MODEL_WEIGHTS or use default filename attention_unet_pe.pth

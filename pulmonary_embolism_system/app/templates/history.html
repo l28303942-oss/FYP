@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div>
+    <p class="eyebrow">Audit trail</p>
+    <h1>Analysis history</h1>
+    <p class="muted">Search, filter by patient, sort chronologically</p>
+  </div>
+</section>
+
+<form class="toolbar glass" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search patient name…" class="search-input">
+  <select name="patient_id" class="select">
+    <option value="">All patients</option>
+    {% for p in patient_list %}
+      <option value="{{ p.id }}" {% if patient_filter and p.id == patient_filter|int %}selected{% endif %}>{{ p.patient_id }} — {{ p.full_name }}</option>
+    {% endfor %}
+  </select>
+  <select name="sort" class="select">
+    <option value="desc" {% if sort == 'desc' %}selected{% endif %}>Newest first</option>
+    <option value="asc" {% if sort == 'asc' %}selected{% endif %}>Oldest first</option>
+  </select>
+  <button type="submit" class="btn btn-ghost">Apply</button>
+</form>
+
+<div class="timeline">
+  {% for s in scans %}
+  {% set pat = patients_map.get(s.patient_id) %}
+  {% set rep = reps.get(s.id) %}
+  <article class="timeline-card glass">
+    <div class="timeline-dot"></div>
+    <div class="timeline-body">
+      <header>
+        <strong>Scan #{{ s.id }}</strong>
+        <span class="muted">{{ s.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+      </header>
+      <p>{{ pat.full_name if pat else 'Unknown' }} · <span class="badge st-{{ s.status }}">{{ s.status }}</span></p>
+      <p class="muted fine-print">Confidence: {% if s.confidence is not none %}{{ '%.2f'|format(s.confidence*100) }}%{% else %}n/a{% endif %} · Time: {{ '%.3f'|format(s.processing_time_sec or 0) }}s</p>
+      <div class="timeline-actions">
+        {% if s.status == 'completed' %}
+          <a href="{{ url_for('main.media_overlay', sid=s.id) }}" target="_blank" class="btn btn-sm btn-ghost">View overlay</a>
+        {% endif %}
+        {% if rep %}
+          <a href="{{ url_for('main.download_report', rid=rep.id) }}" class="btn btn-sm btn-primary"><i class="fa-solid fa-file-pdf"></i> Report</a>
+        {% endif %}
+        <form method="post" action="{{ url_for('main.history_delete', sid=s.id) }}" onsubmit="return confirm('Delete this record?');">
+          <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
+        </form>
+      </div>
+    </div>
+  </article>
+  {% else %}
+  <div class="empty-state glass"><p>No history yet.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}
