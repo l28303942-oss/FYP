@@ -1,0 +1,22 @@
+/trained models
+
+# Large checkpoints (keep source code in details/)
+details/*.pth
+
+# Virtual environments
+pe_env/
+venv/
+.env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
