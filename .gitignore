@@ -14,9 +14,6 @@ pe_dl_research/outputs/
 Dataset And Files/
 Preprocessed_Dataset_Segmentation/
 
-# Large checkpoints (keep source code in details/)
-details/*.pth
-
 # Virtual environments
 pe_env/
 venv/
